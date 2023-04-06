@@ -6,6 +6,7 @@ pipeline {
 
     environment {
         PATH = "${PATH}:${getTerraformPath()}"
+        VERSION = "1.0.${BUILD_NUMBER}"
         RUNNER = "Marcus"
     }
 

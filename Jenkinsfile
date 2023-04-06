@@ -77,15 +77,15 @@ pipeline {
          }
          }
 
-          stage('Build Vulnerability Report'){
-             steps {
-                 sh """
+        //   stage('Build Vulnerability Report'){
+        //      steps {
+        //          sh """
                  
-                 aws inspector start-assessment-run --assessment-run-name Hardeningrun_'${VERSION}' --assessment-template-arn "arn:aws:inspector:us-east-1:838518434784:target/0-lZCXDPw9/template/0-8VwBwXk9" --region us-east-1
-                 """  
-                  // slackSend (color: '#FFFF00', message: "ENDING DEPLOYMENT: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")                        
-         }
-         }
+        //          aws inspector start-assessment-run --assessment-run-name Hardeningrun_'${VERSION}' --assessment-template-arn "arn:aws:inspector:us-east-1:838518434784:target/0-lZCXDPw9/template/0-8VwBwXk9" --region us-east-1
+        //          """  
+        //           // slackSend (color: '#FFFF00', message: "ENDING DEPLOYMENT: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")                        
+        //  }
+        //  }
     
     }
 }

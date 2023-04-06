@@ -22,9 +22,13 @@ variable "environment" {
 }
 
 
-variable "engineer_role_arn" {}
+variable "engineer_role_arn" {
+  default = "arn:aws:iam::142772877088:role/Engineer"
+}
 
-variable "dev_account_num" {}
+variable "dev_account_num" {
+  default = 142772877088
+}
 
 
 variable "ami" {
@@ -83,7 +87,9 @@ variable "work_environment" {
   default     = "development"
 }
 
-variable "aws_secrets_manid" {}
+variable "aws_secrets_manid" {
+  default = "g2secrets"
+}
 
 variable "rdsport" {
   default = 5432

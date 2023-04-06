@@ -1,0 +1,2 @@
+# scp app server key into bastion server
+scp -i g2_ruby_deployment/pubsub-key-pair g2_ruby_deployment/privsub-key-pair ec2-user@3.227.255.140:/home/ec2-user

@@ -80,7 +80,7 @@ pipeline {
              steps {
                  sh """
                  
-                 aws inspector start-assessment-run --assessment-run-name Hardeningrun_'${VERSION}' --assessment-template-arn "arn:aws:inspector:us-east-1:838518434784:target/0-fjdAxFxM/template/0-YbpNdN5U/run/0-t9yfwqY5" --region us-east-1
+                 aws inspector start-assessment-run --assessment-run-name Hardeningrun_'${VERSION}' --assessment-template-arn "arn:aws:inspector:us-east-1:838518434784:target/0-fjdAxFxM/template/" --region us-east-1
                  """  
                   slackSend (color: '#FFFF00', message: "ENDING DEPLOYMENT: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")                        
          }

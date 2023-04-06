@@ -6,11 +6,36 @@ pipeline {
 
     environment {
         PATH = "${PATH}:${getTerraformPath()}"
-        AMI_ID="stack-ami-${BUILD_NUMBER}"
-        VERSION = "1.0.${BUILD_NUMBER}"
         RUNNER = "Marcus"
     }
+
     stages{
+
+        stage ('Sonarcube Scan') {
+            steps {
+                slackSend (color: '#FFFF00', message: "STARTING SONARQUBE SCAN FOR G2 EC2  - '${env.RUNNER}': Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+                script {
+                scannerHome = tool 'sonarqube'
+                }
+                withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]){
+                withSonarQubeEnv('SonarQubeScanner') {
+                sh " ${scannerHome}/bin/sonar-scanner \
+                -Dsonar.projectKey=CliXX-App-Marcus   \
+                -Dsonar.login=${SONAR_TOKEN} "
+                        }
+                    }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+              //slackSend (color: '#FFFF00', message: "WAITING FOR QUALITY GATE REPORT FOR G2 - '${env.RUNNER}': Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+                timeout(time: 3, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+            }
+            }
+        }
+
 
          stage('Initial Stage') {
               steps {
@@ -23,7 +48,7 @@ pipeline {
 
         stage('Terraform init'){
              steps {
-                  slackSend (color: '#FFFF00', message: "TERRAFORM INIT - '${env.RUNNER}': Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+                  //slackSend (color: '#FFFF00', message: "TERRAFORM INIT - '${env.RUNNER}': Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
                  sh """
 
                  terraform init -upgrade 
@@ -51,29 +76,25 @@ pipeline {
          }
          }
 
-        //   stage('Build Vulnerability Report'){
-        //      steps {
-        //          sh """
+          stage('Build Vulnerability Report'){
+             steps {
+                 sh """
                  
-        //          aws inspector start-assessment-run --assessment-run-name Hardeningrun_'${VERSION}' --assessment-template-arn "arn:aws:inspector:us-east-1:838518434784:target/0-fjdAxFxM/template/0-YbpNdN5U/run/0-t9yfwqY5" --region us-east-1
-        //          """  
-        //           slackSend (color: '#FFFF00', message: "ENDING DEPLOYMENT: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")                        
-        //  }
-        //  }
+                 aws inspector start-assessment-run --assessment-run-name Hardeningrun_'${VERSION}' --assessment-template-arn "arn:aws:inspector:us-east-1:838518434784:target/0-fjdAxFxM/template/0-YbpNdN5U/run/0-t9yfwqY5" --region us-east-1
+                 """  
+                  slackSend (color: '#FFFF00', message: "ENDING DEPLOYMENT: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")                        
+         }
+         }
     
     }
 }
 
- def getTerraformPath(){
+def getSonarPath(){
+        def SonarHome= tool name: 'sonarqube', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+        return SonarHome
+    }
+
+def getTerraformPath(){
         def tfHome= tool name: 'terraform-14', type: 'terraform'
         return tfHome
     }
-
-//  def getAnsiblePath(){
-//         def AnsibleHome= tool name: 'Ansible', type: 'org.jenkinsci.plugins.ansible.AnsibleInstallation'
-//         return AnsibleHome
-//     }
-
-// def getPackerPath(){
-//        def PackerHome= tool name: 'Packer', type: 'biz.neustar.jenkins.plugins.packer.PackerInstallation'
-//     }

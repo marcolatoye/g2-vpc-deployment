@@ -22,48 +22,48 @@ resource "aws_launch_template" "bastion_server_template" {
   instance_type = var.instance_type
   key_name      = "pubsub-key-pair"
   user_data = "${base64encode(<<EOF
-        ${templatefile("${path.module}/bastionserver_btstrp.sh", { MOUNT_POINT=var.mount_point, DD_KEY = "${local.wp_creds.datadog_key}" })}
+        ${templatefile("${path.module}/bastionserver_btstrp.sh", { MOUNT_POINT = var.mount_point, DD_KEY = "${local.wp_creds.datadog_key}" })}
         EOF
-)}"
+  )}"
 
 
-#base64encode(file("${path.module}/bastionserver_btstrp.sh"))
+  #base64encode(file("${path.module}/bastionserver_btstrp.sh"))
 
-network_interfaces {
-  associate_public_ip_address = true
-  device_index                = 0
-  security_groups             = [aws_security_group.bastion-server-sg.id]
-}
-
-
-tags = {
-  Name       = "bastion-server"
-  OwnerEmail = "marc.olatoye@gmail.com"
-  Backup     = "Yes"
-}
-
-dynamic "block_device_mappings" {
-  for_each = [for vol in var.dev_names : {
-    device_name           = "/dev/${vol}"
-    virtual_name          = "ebs_dsk-${vol}"
-    delete_on_termination = true
-    encrypted             = false
-    volume_size           = 10
-    volume_type           = "gp2"
-  }]
-  content {
-    device_name  = block_device_mappings.value.device_name
-    virtual_name = block_device_mappings.value.virtual_name
-
-    ebs {
-      delete_on_termination = block_device_mappings.value.delete_on_termination
-      encrypted             = block_device_mappings.value.encrypted
-      volume_size           = block_device_mappings.value.volume_size
-      volume_type           = block_device_mappings.value.volume_type
-    }
+  network_interfaces {
+    associate_public_ip_address = true
+    device_index                = 0
+    security_groups             = [aws_security_group.bastion-server-sg.id]
   }
 
-}
+
+  tags = {
+    Name        = "bastion-server-${local.name_acc_prefix}"
+    OwnerEmail  = var.useremail
+    Environment = "${local.name_acc_prefix}"
+  }
+
+  dynamic "block_device_mappings" {
+    for_each = [for vol in var.dev_names : {
+      device_name           = "/dev/${vol}"
+      virtual_name          = "ebs_dsk-${vol}"
+      delete_on_termination = true
+      encrypted             = false
+      volume_size           = 10
+      volume_type           = "gp2"
+    }]
+    content {
+      device_name  = block_device_mappings.value.device_name
+      virtual_name = block_device_mappings.value.virtual_name
+
+      ebs {
+        delete_on_termination = block_device_mappings.value.delete_on_termination
+        encrypted             = block_device_mappings.value.encrypted
+        volume_size           = block_device_mappings.value.volume_size
+        volume_type           = block_device_mappings.value.volume_type
+      }
+    }
+
+  }
 
 }
 
@@ -91,7 +91,7 @@ resource "local_file" "privsub-key" {
 
 
 resource "aws_launch_template" "app_server_template" {
-  name                   = "app_server"
+  name                   = "app_server-${local.name_acc_prefix}"
   vpc_security_group_ids = [aws_security_group.server-lt-sg.id]
   image_id               = var.ami_appserver
   instance_type          = var.instance_type
@@ -103,33 +103,10 @@ resource "aws_launch_template" "app_server_template" {
       rds_password = "${local.wp_creds.rds_pass_word}", region = "${local.wp_creds.aws_region}",
       rds_hostname = element(split(":", aws_db_instance.database-instance.endpoint), 0),
       efs_dnsname  = aws_efs_file_system.app-server-efs.dns_name, RAILS_APPNAME = var.rails_appname, DD_KEY = "${local.wp_creds.datadog_key}", rds_port = var.rdsport,
-      asdf_bin     = var.asdfbin, asdf_ruby_bin = var.asdf_rubybin, HOME = var.roothome })}
+  asdf_bin = var.asdfbin, asdf_ruby_bin = var.asdf_rubybin, HOME = var.roothome })}
         EOF
 )}"
 
 
-
-# dynamic "block_device_mappings" {
-#   for_each = [for vol in var.dev_names : {
-#     device_name           = "/dev/${vol}"
-#     virtual_name          = "ebs_dsk-${vol}"
-#     delete_on_termination = true
-#     encrypted             = false
-#     volume_size           = 10
-#     volume_type           = "gp2"
-#   }]
-#   content {
-#     device_name  = block_device_mappings.value.device_name
-#     virtual_name = block_device_mappings.value.virtual_name
-
-#     ebs {
-#       delete_on_termination = block_device_mappings.value.delete_on_termination
-#       encrypted             = block_device_mappings.value.encrypted
-#       volume_size           = block_device_mappings.value.volume_size
-#       volume_type           = block_device_mappings.value.volume_type
-#     }
-#   }
-
-# }
 
 }

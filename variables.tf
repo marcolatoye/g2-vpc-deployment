@@ -13,15 +13,6 @@ variable "AWS_REGION" {
 # variable "AWS_ACCESS_KEY" {}
 # variable "AWS_SECRET_KEY" {}
 
-
-# Environment Variable
-variable "environment" {
-  description = "Environment Variable used as a prefix"
-  type        = string
-  default     = "dev"
-}
-
-
 variable "engineer_role_arn" {
   default = "arn:aws:iam::142772877088:role/Engineer"
 }
@@ -72,20 +63,6 @@ variable "mount_point" {
   default = "/var/www/html"
 }
 
-variable "ecr_repo_name" {
-  default = "clixx-repository"
-}
-variable "proj_name" {
-  type        = string
-  default     = "clixx-webapp"
-  description = "Project Name"
-}
-
-variable "work_environment" {
-  type        = string
-  description = "SDLC Environment"
-  default     = "development"
-}
 
 variable "aws_secrets_manid" {
   default = "g2secrets"
@@ -119,6 +96,16 @@ variable "roothome" {
   default = "/root"
 }
 
-# variable "mount_point" {
-#   default = "/var/www/html"
-# }
+variable "useremail" {
+  default = "marc.olatoye@gmail.com"
+}
+
+variable "environment" {
+  type = map(string)
+  default = {
+    142772877088 = "dev"
+    838518434784 = "uat"
+    123456789012 = "prod"
+    908765432123 = "mgmt"
+  }
+}

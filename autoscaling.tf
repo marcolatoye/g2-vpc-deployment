@@ -7,11 +7,11 @@ resource "aws_autoscaling_group" "bastion_server_asg" {
   min_size                  = 1
   max_size                  = 2
   desired_capacity          = 1
-  #target_group_arns         = [aws_lb_target_group.target_group_bastion.arn]
+  
 
   launch_template {
     id = aws_launch_template.bastion_server_template.id
-    #version = aws_launch_template.bastion_server_template.latest_version
+    
   }
 
 
@@ -21,7 +21,7 @@ resource "aws_autoscaling_group" "bastion_server_asg" {
 
   tag {
     key                 = "Name"
-    value               = "bastion_server_instance"
+    value               = "bastion_server_instance-${local.name_acc_prefix}"
     propagate_at_launch = true
   }
 
@@ -51,7 +51,7 @@ resource "aws_autoscaling_group" "app-server-asg" {
   target_group_arns = [aws_lb_target_group.target_group_priv.arn]
   launch_template {
     id = aws_launch_template.app_server_template.id
-    #version = aws_launch_template.app_server_template.latest_version
+    
   }
 
   health_check_type         = "EC2"
@@ -67,7 +67,7 @@ resource "aws_autoscaling_group" "app-server-asg" {
 
   tag {
     key                 = "Name"
-    value               = "app_server_instance"
+    value               = "app_server_instance-${local.name_acc_prefix}"
     propagate_at_launch = true
   }
 }

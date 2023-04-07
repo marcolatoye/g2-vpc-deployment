@@ -1,7 +1,7 @@
 ####    Security group to load balancer
 resource "aws_security_group" "elb-sg" {
   vpc_id      = aws_vpc.main-vpc.id
-  name        = "Loadbalancer-sg"
+  name        = "Loadbalancer-sg-${local.name_acc_prefix}"
   description = "Load balancer security group"
 }
 
@@ -46,7 +46,7 @@ resource "aws_security_group_rule" "elb-egress-rule" {
 
 resource "aws_security_group" "server-lt-sg" {
   vpc_id      = aws_vpc.main-vpc.id
-  name        = "AppServer-sg"
+  name        = "AppServer-sg-${local.name_acc_prefix}"
   description = "Launch Template Security Group"
 }
 
@@ -121,7 +121,7 @@ resource "aws_security_group_rule" "server-lt-egress-rule" {
 #EFS security group
 resource "aws_security_group" "efs-sg" {
   vpc_id      = aws_vpc.main-vpc.id
-  name        = "EFS-sg"
+  name        = "EFS-sg-${local.name_acc_prefix}"
   description = "EFS Security Group"
 }
 
@@ -147,7 +147,7 @@ resource "aws_security_group_rule" "efs-egress-rule" {
 ## Create security group
 resource "aws_security_group" "bastion-server-sg" {
   vpc_id      = aws_vpc.main-vpc.id
-  name        = "Bastion-sg"
+  name        = "Bastion-sg-${local.name_acc_prefix}"
   description = "Public Subnet Instance Security Group"
 }
 
@@ -207,7 +207,7 @@ resource "aws_security_group_rule" "egress-rule" {
 #RDS Security Group
 resource "aws_security_group" "rds-instance-sg" {
   vpc_id      = aws_vpc.main-vpc.id
-  name        = "RDS-sg"
+  name        = "RDS-sg-${local.name_acc_prefix}"
   description = "RDS Security Group"
 }
 

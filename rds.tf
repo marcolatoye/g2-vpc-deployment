@@ -10,7 +10,6 @@ resource "aws_db_instance" "database-instance" {
   identifier        = local.wp_creds.rds_dbname
   username          = local.wp_creds.rds_user_name
   password          = local.wp_creds.rds_pass_word
-  #parameter_group_name = "default.postgres12"
   vpc_security_group_ids = [aws_security_group.rds-instance-sg.id]
   db_subnet_group_name   = aws_db_subnet_group.rds-subnet-group.name
   skip_final_snapshot    = true

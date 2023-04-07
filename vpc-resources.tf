@@ -3,7 +3,12 @@ resource "aws_vpc" "main-vpc" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_support   = true
   enable_dns_hostnames = true
-  tags                 = local.vpc_tags
+
+  tags = {
+    Name        = "main-vpc-${local.name_acc_prefix}"
+    OwnerEmail  = var.useremail
+    Environment = "${local.name_acc_prefix}"
+  }
 
 }
 
@@ -13,10 +18,11 @@ resource "aws_subnet" "public_az1" {
   vpc_id            = aws_vpc.main-vpc.id
   cidr_block        = "10.0.0.0/23"
   availability_zone = "us-east-1a"
-  #map_public_ip_on_launch = true
 
   tags = {
-    Name = "public_subnet_az1-${local.name_acc_prefix}"
+    Name        = "public_subnet_az1-${local.name_acc_prefix}"
+    OwnerEmail  = var.useremail
+    Environment = "${local.name_acc_prefix}"
   }
 }
 
@@ -24,10 +30,11 @@ resource "aws_subnet" "public_az2" {
   vpc_id            = aws_vpc.main-vpc.id
   cidr_block        = "10.0.2.0/23"
   availability_zone = "us-east-1b"
-  #map_public_ip_on_launch = true
 
   tags = {
-    Name = "public_subnet_az2-${local.name_acc_prefix}"
+    Name        = "public_subnet_az2-${local.name_acc_prefix}"
+    OwnerEmail  = var.useremail
+    Environment = "${local.name_acc_prefix}"
   }
 }
 
@@ -36,10 +43,11 @@ resource "aws_subnet" "app_server_private_az1" {
   vpc_id            = aws_vpc.main-vpc.id
   cidr_block        = "10.0.4.0/25" #10.0.4.0/25
   availability_zone = "us-east-1a"
-  #map_public_ip_on_launch = false
 
   tags = {
-    Name = "app_server_private_subnet_az1-${local.name_acc_prefix}"
+    Name        = "app_server_private_subnet_az1-${local.name_acc_prefix}"
+    OwnerEmail  = var.useremail
+    Environment = "${local.name_acc_prefix}"
   }
 }
 
@@ -47,10 +55,11 @@ resource "aws_subnet" "app_server_private_az2" {
   vpc_id            = aws_vpc.main-vpc.id
   cidr_block        = "10.0.4.128/25" #10.0.4.128/25
   availability_zone = "us-east-1b"
-  #map_public_ip_on_launch = false
 
   tags = {
-    Name = "app_server_private_subnet_az2-${local.name_acc_prefix}"
+    Name        = "app_server_private_subnet_az2-${local.name_acc_prefix}"
+    OwnerEmail  = var.useremail
+    Environment = "${local.name_acc_prefix}"
   }
 }
 #Calculate CIDRs
@@ -61,7 +70,9 @@ resource "aws_subnet" "rds_private_az1" {
   map_public_ip_on_launch = false
 
   tags = {
-    Name = "rds_private_subnet_az1-${local.name_acc_prefix}"
+    Name        = "rds_private_subnet_az1-${local.name_acc_prefix}"
+    OwnerEmail  = var.useremail
+    Environment = "${local.name_acc_prefix}"
   }
 }
 
@@ -72,7 +83,9 @@ resource "aws_subnet" "rds_private_az2" {
   map_public_ip_on_launch = false
 
   tags = {
-    Name = "rds_private_subnet_az2-${local.name_acc_prefix}"
+    Name        = "rds_private_subnet_az2-${local.name_acc_prefix}"
+    OwnerEmail  = var.useremail
+    Environment = "${local.name_acc_prefix}"
   }
 }
 
@@ -80,8 +93,11 @@ resource "aws_subnet" "rds_private_az2" {
 ################################### Internet Gateway ####################################
 resource "aws_internet_gateway" "main-int-gateway" {
   vpc_id = aws_vpc.main-vpc.id
+
   tags = {
-    "Name" = "clixx-vpc-igw"
+    Name        = "vpc-igw-${local.name_acc_prefix}"
+    OwnerEmail  = var.useremail
+    Environment = "${local.name_acc_prefix}"
   }
 }
 

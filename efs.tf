@@ -3,8 +3,12 @@ resource "aws_efs_file_system" "app-server-efs" {
   performance_mode = "generalPurpose"
   throughput_mode  = "bursting"
   encrypted        = "false"
+
+
   tags = {
-    Name = "clixx-terraform-efs"
+    Name        = "app-server-efs-${local.name_acc_prefix}"
+    OwnerEmail  = var.useremail
+    Environment = "${local.name_acc_prefix}"
   }
 }
 

@@ -1,6 +1,6 @@
 ## Private Subnet Load Balancer
 resource "aws_lb" "app_server_elb" {
-  name               = "app-server-elb"
+  name               = "app-server-elb-${local.name_acc_prefix}"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.elb-sg.id]
@@ -12,7 +12,7 @@ resource "aws_lb" "app_server_elb" {
 
 # Private subnet target group
 resource "aws_lb_target_group" "target_group_priv" {
-  name        = "my-target-group"
+  name        = "my-target-group-${local.name_acc_prefix}"
   protocol    = "HTTP"
   port        = 80
   target_type = "instance"
